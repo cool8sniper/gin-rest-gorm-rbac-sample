@@ -1,0 +1,5 @@
+cscope*
+vendor
+gin-bin
+tmp
+.idea/
