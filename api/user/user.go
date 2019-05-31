@@ -76,7 +76,7 @@ func create(c *gin.Context) {
 
 func generateToken(data common.JSON) (string, error) {
 
-	//  token is valid for i hour
+	//  token is valid for 1 hour
 	date := time.Now().Add(time.Hour * 1)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
