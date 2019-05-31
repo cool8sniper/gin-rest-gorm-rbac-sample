@@ -37,12 +37,14 @@ func create(c *gin.Context) {
 		Email    string `json:"email" binding:"required"`
 		Name     string `json:"name" binding:"required"`
 		Password string `json:"password" binding:"required"`
+		Age      int    `json:"age" binding:"required"`
 	}
 
 	var body RequestBody
 	if err := c.BindJSON(&body); err != nil {
 		fmt.Println(body)
-		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "No todo found!"})
+		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest,
+			"message": "miss!"})
 		return
 	}
 	// check existancy
@@ -64,6 +66,7 @@ func create(c *gin.Context) {
 		Name:     body.Name,
 		Email:    body.Email,
 		Password: hash,
+		Age:      body.Age,
 	}
 
 	db.NewRecord(user)

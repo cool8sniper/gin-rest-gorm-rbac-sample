@@ -3,7 +3,7 @@ package models
 import "github.com/gin-rest-gorm-rbac-sample/lib/common"
 
 type User struct {
-	ID       float64
+	ID       int64
 	Name     string
 	Age      int
 	Email    string
@@ -22,7 +22,7 @@ func (u User) Serialize() common.JSON {
 }
 
 func (u *User) Read(m common.JSON) {
-	u.ID = m["id"].(float64)
+	u.ID = m["id"].(int64)
 	u.Name = m["name"].(string)
 	u.Email = m["emial"].(string)
 
