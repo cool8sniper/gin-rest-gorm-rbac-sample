@@ -1,0 +1,33 @@
+basePath: '{{.BasePath}}'
+host: '{{.Host}}'
+info:
+  contact: {}
+  description: An example of gin
+  license:
+    name: MIT
+    url: https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE
+  termsOfService: https://github.com/EDDYCJY/go-gin-example
+  title: Golang Gin API
+  version: "1.0"
+paths:
+  /api/user/{id}:
+    get:
+      parameters:
+      - description: IDd
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"id": 112,"name":"xxx", "email": "xx@xx.com"}'
+          schema:
+            type: string
+        "404":
+          description: '{"message": "No found user"}'
+          schema:
+            type: string
+      summary: Get user
+swagger: "2.0"

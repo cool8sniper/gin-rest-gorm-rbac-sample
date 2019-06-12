@@ -19,6 +19,13 @@ import (
 
 type User = models.User
 
+
+// @Summary Get user
+// @Produce  json
+// @Param id path int true "IDd"
+// @Success 200 {string}  json "{"id": 112,"name":"xxx", "email": "xx@xx.com"}"
+// @Failure 404 {string}  json "{"message": "No found user"}"
+// @Router /api/user/{id} [get]
 func getUser(c *gin.Context) {
 	userID := c.Param("id")
 	db := c.MustGet("db").(*gorm.DB)
@@ -138,7 +145,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	user := r.Group("/")
 	{
 		user.POST("user", middleware.Authorized, create)
-		user.GET("user/:id", middleware.Authorized, getUser)
+		user.GET("user/:id", getUser)
 		user.POST("login", login)
 
 	}
