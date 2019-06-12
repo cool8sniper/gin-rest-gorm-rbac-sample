@@ -5,8 +5,8 @@ info:
   description: An example of gin
   license:
     name: MIT
-    url: https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE
-  termsOfService: https://github.com/EDDYCJY/go-gin-example
+    url: https://github.com/cool8sniper/gin-rest-gorm-rbac-sample/blob/master/LICENSE
+  termsOfService: https://github.com/cool8sniper/gin-rest-gorm-rbac-sample
   title: Golang Gin API
   version: "1.0"
 paths:
