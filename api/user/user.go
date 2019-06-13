@@ -7,22 +7,22 @@ import (
 	"os"
 	"time"
 
+	"github.com/gin-rest-gorm-rbac-sample/middleware"
+
 	"github.com/gin-rest-gorm-rbac-sample/database/models"
 	"github.com/gin-rest-gorm-rbac-sample/lib/common"
-	"github.com/gin-rest-gorm-rbac-sample/middleware"
 	"github.com/gin-rest-gorm-rbac-sample/utils"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
 type User = models.User
 
-
 // @Summary Get user
 // @Produce  json
-// @Param id path int true "IDd"
+// @Param id path int true "ID"
 // @Success 200 {string}  json "{"id": 112,"name":"xxx", "email": "xx@xx.com"}"
 // @Failure 404 {string}  json "{"message": "No found user"}"
 // @Router /api/user/{id} [get]
@@ -44,7 +44,7 @@ func create(c *gin.Context) {
 		Email    string `json:"email" binding:"required"`
 		Name     string `json:"name" binding:"required"`
 		Password string `json:"password" binding:"required"`
-		Age      int    `json:"age" binding:"required"`
+		Age      uint8  `json:"age" binding:"required"`
 	}
 
 	var body RequestBody
@@ -140,13 +140,23 @@ func login(c *gin.Context) {
 	})
 }
 
+func permissions(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	name := models.GetUserPermission(db, 2)
+	c.JSON(200, common.JSON{
+		"permissions": name,
+	})
+
+}
+
 // ApplyRoutes applies router to the gin Engine
 func ApplyRoutes(r *gin.RouterGroup) {
 	user := r.Group("/")
 	{
-		user.POST("user", middleware.Authorized, create)
-		user.GET("user/:id", getUser)
+		user.POST("user", middleware.CheckPermission([]string{common.MANAGER_USER}...), create)
+		user.GET("user/:id", middleware.CheckPermission([]string{common.VIEW_USER, common.MANAGER_USER}...), getUser)
 		user.POST("login", login)
-
+		user.GET("permissions", permissions)
 	}
 }
