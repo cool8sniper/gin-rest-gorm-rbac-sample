@@ -1,8 +1,10 @@
 package models
 
 import (
+	"fmt"
+
+	"github.com/gin-rest-gorm-rbac-sample/database/mysql"
 	"github.com/gin-rest-gorm-rbac-sample/lib/common"
-	"github.com/jinzhu/gorm"
 )
 
 type User struct {
@@ -40,10 +42,11 @@ func (u *User) Read(m common.JSON) {
 
 }
 
-func getRolePermissionByRoleIds(db *gorm.DB, roleIds []uint) []string {
+func getRolePermissionByRoleIds(roleIds []uint) []string {
 	type NameResult struct {
 		Name string
 	}
+	db := mysql.GetMysql()
 	var nameResult []NameResult
 	db.Table("permission").Select("name").
 		Joins("left join role_permission on role_permission.permission_id = permission.id").
@@ -55,14 +58,15 @@ func getRolePermissionByRoleIds(db *gorm.DB, roleIds []uint) []string {
 	return result
 }
 
-func GetUserPermission(db *gorm.DB, userId uint) []string {
-
+func GetUserPermission(userId uint) []string {
+	db := mysql.GetMysql()
+	fmt.Println(db, "=============")
 	var userRoles []UserRole
 	db.Where("user_id = ?", userId).Find(&userRoles)
 	var roleIds []uint
 	for _, v := range userRoles {
 		roleIds = append(roleIds, v.RoleId)
 	}
-	return getRolePermissionByRoleIds(db, roleIds)
+	return getRolePermissionByRoleIds(roleIds)
 
 }

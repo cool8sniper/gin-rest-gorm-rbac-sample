@@ -8,5 +8,4 @@ func Migrate(db *gorm.DB) {
 	db.AutoMigrate(Role{})
 	db.AutoMigrate(Permission{})
 	db.AutoMigrate(RolePermission{})
-
 }

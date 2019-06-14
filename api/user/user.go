@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/gin-rest-gorm-rbac-sample/middleware"
 
 	"github.com/gin-rest-gorm-rbac-sample/database/models"
@@ -15,7 +17,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 )
 
 type User = models.User
@@ -140,23 +141,29 @@ func login(c *gin.Context) {
 	})
 }
 
-func permissions(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-
-	name := models.GetUserPermission(db, 2)
+func userPermissions(c *gin.Context) {
+	user := c.MustGet("user").(User)
+	name := models.GetUserPermission(user.ID)
 	c.JSON(200, common.JSON{
 		"permissions": name,
 	})
+}
 
+func me(c *gin.Context) {
+	user := c.MustGet("user").(User)
+	c.JSON(200, common.JSON{
+		"user": user.Serialize(),
+	})
 }
 
 // ApplyRoutes applies router to the gin Engine
 func ApplyRoutes(r *gin.RouterGroup) {
 	user := r.Group("/")
 	{
+		user.POST("login", login)
+		user.POST("me", middleware.Authorized, me)
+		user.GET("me/permissions", middleware.Authorized, userPermissions)
 		user.POST("user", middleware.CheckPermission([]string{common.MANAGER_USER}...), create)
 		user.GET("user/:id", middleware.CheckPermission([]string{common.VIEW_USER, common.MANAGER_USER}...), getUser)
-		user.POST("login", login)
-		user.GET("permissions", permissions)
 	}
 }
